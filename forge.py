@@ -44,6 +44,7 @@ def fill_parenthesis(lst, n=0):
         s += ", "
     s = list(s)
     s[-2] = ")"
+    return "".join(s)
 
 s = s[:-1] + fill_parenthesis(columns) + query[1] + fill_parenthesis(values, 1) + ";"
 print(s)
