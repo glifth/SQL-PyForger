@@ -3,6 +3,8 @@ from tool import *
 
 l = []
 
+pretty_print = 0
+
 if len(sys.argv) != 3:
     usage()
     exit()
@@ -16,7 +18,29 @@ with open(sys.argv[1]) as file:
             l.append( [word for word in line.replace("|"," ").split()] )
 
 columns = l[0]
-values = l[1]
+values  = l[1]
+
+if sys.argv[2] == "print":
+    #tuple for (position, len)
+    def fill_tuple(elm):
+        tup = (0,0)
+        for i, e in enumerate(elm):
+            if len(e) > tup[1]:
+                tup = (i, len(e))
+        return tup
+
+    col_max_len = fill_tuple(columns)
+    val_max_len = fill_tuple(values)
+
+    print("-" * (col_max_len[1] + val_max_len[1] + 5))
+    print("|" + str(table_name[:-1].center((col_max_len[1] + val_max_len[1] + 3)) + "|"))
+    print("|" + "-" * (col_max_len[1] + val_max_len[1] + 3) + "|")
+
+    for i in range(len(columns)):
+        to_print = columns[i].ljust(col_max_len[1]) + " | " + values[i].rjust(val_max_len[1])
+        print("|" + to_print + "|")
+        print("|" + "-" * (int(len(to_print)/2) + 1) + "+" + "-" * (int(len(to_print)/2) - 1) + "|")
+    exit()
 
 def option(opt):
     dct = {
@@ -47,4 +71,5 @@ def fill_parenthesis(lst, n=0):
     return "".join(s)
 
 s = s[:-1] + fill_parenthesis(columns) + query[1] + fill_parenthesis(values, 1) + ";"
+
 print(s)
