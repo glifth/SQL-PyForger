@@ -15,8 +15,13 @@ with open(sys.argv[1]) as file:
         if i == 0:
             table_name = line
         else:
-            l.append( [word for word in line.replace("|"," ").split()] )
-
+            lst = []
+            for word in line.split('|'):
+                if len(word.split()) == 1:   
+                    lst.append((word.split())[0])
+                else:
+                    lst.append("")
+            l.append(lst)
 columns = l[0]
 values  = l[1]
 
@@ -37,9 +42,11 @@ if sys.argv[2] == "print":
     print("|" + "-" * (col_max_len[1] + val_max_len[1] + 3) + "|")
 
     for i in range(len(columns)):
+        if columns[i] == "":
+            continue;
         to_print = columns[i].ljust(col_max_len[1]) + " | " + values[i].rjust(val_max_len[1])
         print("|" + to_print + "|")
-        print("|" + "-" * (int(len(to_print)/2) + 1) + "+" + "-" * (int(len(to_print)/2) - 1) + "|")
+        print("|" + "-" * (col_max_len[1] + 1) + "+" + "-" * (val_max_len[1] + 1) + "|")
     exit()
 
 def option(opt):
