@@ -17,8 +17,8 @@ with open(sys.argv[1]) as file:
         else:
             lst = []
             for word in line.split('|'):
-                if len(word.split()) == 1:   
-                    lst.append((word.split())[0])
+                if len(word) != 0:   
+                    lst.append(word.strip())
                 else:
                     lst.append("")
             l.append(lst)
@@ -37,9 +37,11 @@ if sys.argv[2] == "print":
     col_max_len = fill_tuple(columns)
     val_max_len = fill_tuple(values)
 
-    print("-" * (col_max_len[1] + val_max_len[1] + 5))
-    print("|" + str(table_name[:-1].center((col_max_len[1] + val_max_len[1] + 3)) + "|"))
-    print("|" + "-" * (col_max_len[1] + val_max_len[1] + 3) + "|")
+    tot_len = col_max_len[1] + val_max_len[1]
+
+    print("-" * (tot_len + 5))
+    print("|" + str(table_name[:-1].center((tot_len + 3)) + "|"))
+    print("|" + "-" * (tot_len + 3) + "|")
 
     for i in range(len(columns)):
         if columns[i] == "":
@@ -52,7 +54,7 @@ if sys.argv[2] == "print":
 def option(opt):
     dct = {
         "update": ["UPDATE", "VALUES"],
-        "insert": ["INSERT INTO", "VALUES"],
+        "insert": ["INSERT INTO", "VALUES"]
     }
     return dct.get(opt)
 
@@ -78,5 +80,4 @@ def fill_parenthesis(lst, n=0):
     return "".join(s)
 
 s = s[:-1] + fill_parenthesis(columns) + query[1] + fill_parenthesis(values, 1) + ";"
-
 print(s)
