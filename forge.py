@@ -53,7 +53,7 @@ if sys.argv[2] == "print":
 
 def option(opt):
     dct = {
-        "update": ["UPDATE", "VALUES"],
+        "update": ["UPDATE", "SET"],
         "insert": ["INSERT INTO", "VALUES"]
     }
     return dct.get(opt)
@@ -64,20 +64,38 @@ if query == None:
     exit()
 
 s = query[0] + " " + table_name
+def forge(lst, query):
 
-def fill_parenthesis(lst, n=0):
-    s = " ("
-    for i, elm in enumerate(lst):
-        if elm.strip() == '' and (i == 0 or i == len(lst) - 1):
-            continue
-        if n == 0 or is_number(elm) or elm == "NULL":
-            s += elm.strip()
-        else:
-            s += "'" + elm.strip() + "'"
-        s += ", "
-    s = list(s)
-    s[-2] = ")"
+    if query == "INSERT" or query == "VALUES":
+        s = " ("
+        for i, elm in enumerate(lst):
+            if elm.strip() == '' and (i == 0 or i == len(lst) - 1):
+                continue
+            if query != "VALUES" or is_number(elm) or elm == "NULL":
+                s += elm.strip()
+            else:
+                s += "'" + elm.strip() + "'"
+            s += ", "
+        s = list(s)
+        s[-2] = ")"
+
+    elif query == "UPDATE":
+        val = lst[1]
+        s = " "
+        for i, elm in enumerate(val):
+            if elm.strip() == '' and (i == 0 or i == len(val) - 1):
+                continue
+            if is_number(elm) or elm == "NULL":
+                s += lst[0][i] + "=" + elm.strip() + ", "
+            else:
+                s += lst[0][i] + "=" + "'" + elm.strip() + "'" + ", "
+        s = list(s)
+        s[-2] = ";"
+
     return "".join(s)
 
-s = s[:-1] + fill_parenthesis(columns) + query[1] + fill_parenthesis(values, 1) + ";"
+if query[0] == "INSERT INTO":
+    s = s[:-1] + forge(columns, "INSERT") + query[1] + forge(values, "VALUES") + ";"
+elif query[0] == "UPDATE":
+    s = s[:-1] + " " + query[1] + forge(l, "UPDATE")
 print(s)
